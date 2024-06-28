@@ -45,6 +45,7 @@ def fun_artista(token, id_artista):
     headerss = obtener_header(token) #se obtiene el header
 
     resultado = get(url, headers = headerss) #se piden los datos a la API para obtener el resultado de lo buscado
+    print(resultado)
     resultado_json = json.loads(resultado.content) #se convierte el resultado json a un diccionario
     return resultado_json #retorna los datos del artista
 

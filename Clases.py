@@ -6,10 +6,14 @@ import pygame
 import random
 import time
 import requests
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 class Constants:
-    ID_CLIENTE =  "74c0383b8305467db74ef28e3e8046f2" 
-    SECRET_CLIENTE = "331c151f6ad749a2b36d81ef97a69360"
+    ID_CLIENTE =  os.getenv("ID_CLIENTE")
+    SECRET_CLIENTE = os.getenv("SECRET_CLIENTE")
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
     RED = (255, 0, 0)
