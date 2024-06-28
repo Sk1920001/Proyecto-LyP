@@ -170,20 +170,7 @@ class Cancion(ObjetoMusical):
         else:
             raise ValueError("la url del preview debe ser dada con un string o puede ser None")
         
-    #métodos
-    def __loadSong(self, preview_url):
-        response = requests.get(preview_url)
-        audio_stream = BytesIO(response.content)
-        pygame.mixer.music.load(audio_stream)
-        pygame.mixer.music.play()
 
-    def play(self):
-        pygame.mixer.init()
-        self.__loadSong(self.__preview_url)
-        
-    def _changeSong(self, preview_url):
-        self.__preview_url = preview_url
-        self.__loadSong(preview_url)
 
 """
 Clases para el juego (usan algunas otras constantes de la clase constantes):
@@ -226,88 +213,8 @@ class Button:
         self.hovered = False
         self.font = font
     
-    #getters 
-    """
-    @property
-    def x(self):
-        return self.x
-    
-    @property
-    def y(self):
-        return self.y
-    
-    @property
-    def width(self):
-        return self.width
-    
-    @property
-    def height(self):
-        return self.height
-    
-    @property
-    def text(self):
-        return self.text
-    
-    @property
-    def color(self):
-        return self.color
-    
-    @property
-    def hover_color(self):
-        return self.hover_color
-    
-    @property
-    def font(self):
-        return self.font
-    
-    @x.setter
-    def x(self, x_nueva):
-        if isinstance(x_nueva, int):
-            self.x = x_nueva
-        else:
-            raise ValueError("el x debe ser un Int")
-        
-    @y.setter
-    def y(self, y_nueva):
-        if isinstance(y_nueva, int):
-            self.y = y_nueva
-        else:
-            raise ValueError("el y debe ser un Int")
-        
-    @width.setter
-    def width(self, width_nueva):
-        if isinstance(width_nueva, int):
-            self.width = width_nueva
-        else:
-            raise ValueError("el width debe ser un Int")
-        
-    @height.setter
-    def height(self, height_nueva):
-        if isinstance(height_nueva, int):
-            self.height = height_nueva
-        else:
-            raise ValueError("el width debe ser un Int")
-        
-    @text.setter
-    def text(self, text_nueva):
-        if isinstance(text_nueva, str):
-            self.text = text_nueva
-        else:
-            raise ValueError("el width debe ser un Int")
-    
-    @color.setter
-    def color(self, color_nueva):
-        self.color = color_nueva
 
-    @hover_color.setter
-    def hover_color(self, hover_color_nueva):
-        self.hover_color = hover_color_nueva
 
-    @font.setter
-    def font(self, font_nueva):
-        self.font = font_nueva
-
-    """
     #métodos
     
     def draw(self, screen):
@@ -410,21 +317,14 @@ class GameScreen:
 
     #métodos
 
-    def __setPlaylistSongs(self,search):
-        tok = obtener_token(Constants().ID_CLIENTE, Constants().SECRET_CLIENTE)
-        id_playlist = buscar_playlist(tok, search)["id"]
-        playlist_dict = playlist(tok,id_playlist)    
-        cantidad_canciones = playlist_dict["tracks"]["total"]
-        for i in range(0,cantidad_canciones,1):
-            if(playlist_dict["tracks"]["items"][i]["track"]["preview_url"] == None):
+    def __setPlaylistSongs(self,playlist):
+        
+        for song in playlist:
+            if(song.preview_url == None):
                 continue
-
-            self.__playlist_songs.append(Cancion(None, #en este caso solo nos interesa el nombre de la canción y el preview_url
-                                                 playlist_dict["tracks"]["items"][i]["track"]["name"], 
-                                                 None, None, None, None, None, 
-                                                 playlist_dict["tracks"]["items"][i]["track"]["preview_url"]
-
-            ))
+            self.__playlist_songs.append(song)
+            print(song.nombre)
+    
         
 
     def __setCurrentSong(self):
@@ -443,7 +343,7 @@ class GameScreen:
         options_songs[random_index-1] = random.choice([song for song in self.__playlist_songs if song.nombre not in self.__used_songs]).nombre
         self.__button1 = Button(25, 200, 350, 100, options_songs[0], Constants.CYAN, Constants.BLUE, self.__font)
         self.__button2 = Button(425, 200, 350, 100, options_songs[1], Constants.CYAN, Constants.BLUE, self.__font)
-        self.__mixer = Cancion(None, None, None, None, None, None, None, self.__current_song.preview_url)
+        self.__mixer = Mixer(self.__current_song.preview_url)
         self.__mixer.play()
 
 
@@ -467,7 +367,7 @@ class GameScreen:
             time.sleep(0.5)
         else:
             raise ValueError("Unknow value for changeButtons. Value must be Correct or Incorrect")
-        self.__mixer._changeSong(self.__current_song.preview_url)
+        self.__mixer.changeSong(self.__current_song.preview_url)
     
     def drawscore(self,screen):
         text=f"Puntaje : {self.__player.score}"
@@ -647,3 +547,26 @@ class GameState:
         if not isinstance (value,bool):
             raise ValueError("GameScreen state must be boolean")
         self.__game_screen_state=value
+
+class Mixer:
+
+    def __init__(self,url):
+        self.__url=url
+  
+    
+    def __loadSong(self,url):
+        response = requests.get(url)
+        audio_stream = BytesIO(response.content)
+        pygame.mixer.music.load(audio_stream)
+        pygame.mixer.music.play()
+
+    def play(self):
+        pygame.mixer.init()
+        self.__loadSong(self.__url)
+        
+
+
+    def changeSong(self,url):
+        self.__url=url
+        self.__loadSong(url)
+
