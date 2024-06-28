@@ -60,11 +60,9 @@ def rellenador_datos(cantidad_de_canciones, playlist, token):
     lista_canciones = []
     lista_artistas = []
 
-    for i in range(0, cantidad_de_canciones, 1): #se recorren las canciones de la playlist
-
+    for i in range(cantidad_de_canciones-1): #se recorren las canciones de la playlist
         artistas_cancion = []
         NroDeArtsDeLaCancion = len(playlist["tracks"]["items"][i]["track"]["artists"])
-        print(len(playlist["tracks"]["items"][i]["track"]["artists"])) 
 
         for art in range(NroDeArtsDeLaCancion): #se recorren los artistas de las canciones
 

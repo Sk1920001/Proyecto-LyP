@@ -21,7 +21,7 @@ class UserInterface:
         self.clear_screen()
         
         # Etiqueta y campo de texto
-        self.label = ttk.Label(self.root, text="Ingrese el nombre de la playlist:")
+        self.label = ttk.Label(self.root, text="Ingrese el nombre de la playlist")
         self.label.pack(pady=10)
         
         self.entry = ttk.Entry(self.root)
@@ -60,10 +60,8 @@ class UserInterface:
 
         id_playlist = buscar_playlist(tok, nombre_a_buscar)["id"] #se busca una playlist y se selecciona su id
         playlistPro = playlist(tok, id_playlist) #se busca la playlist según el id
-        print(playlistPro)
         self.__playlist_name=playlistPro["name"]
-        cantidad_canciones = playlistPro["tracks"]["total"] #en la playlist se accede al apartado tracks y luego se ve el total de canciones
-        print(playlistPro["tracks"]["total"]) #bug que solucionar
+        cantidad_canciones = len(playlistPro["tracks"]["items"]) #en la playlist se accede al apartado tracks y luego se ve el total de canciones
 
         self.__songs,self.__artist = rellenador_datos(cantidad_canciones, playlistPro, tok)
 
